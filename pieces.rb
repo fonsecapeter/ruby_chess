@@ -1,3 +1,5 @@
+require 'singleton'
+
 class Piece
   TYPES = {
     :null => "   ",
@@ -8,9 +10,8 @@ class Piece
     :rook => " \u265C ".encode('utf-8'),
     :pawn => " \u265F ".encode('utf-8'),
   }
-  attr_reader :color
+  attr_reader :color, :pos, :type
   def initialize(pos, color)
-    @board = nil
     @pos = pos
     @color = color
   end
@@ -19,35 +20,104 @@ class Piece
     TYPES[@type]
   end
 
-  def moves
+  def moves(board)
+    # give us all possible moves that are:
+    #   a.) on the board
+    #   b.) not onto another piece of my color
+    []
+  end
+
+  def valid_moves(board)
+    # takes all of my moves and only gives back those that do not
+    # put my color in check
+    valid_moves = []
+    moves(board).each do |pos|
+      board_copy = board.dup
+      move(board_copy, pos)
+
+      valid_moves << pos unless board_copy.in_check?(@color)
+    end
+    valid_moves
+  end
+
+  def move(board, new_pos)
+    starting_pos = @pos
+    board[new_pos] = self
+    board[starting_pos] = NullPiece.instance
+  end
+
+  def move!(board, new_pos)
+    starting_pos = @pos
+    board[new_pos] = self
+    board[starting_pos] = NullPiece.instance
+    @pos = new_pos
   end
 end
 
 class SlidingPiece < Piece
-  def moves(direction)
+  def moves(board)
     possible_moves = []
 
+    if @move_dirs.include?(:diagonal)
+      slide(possible_moves, board) { |i| [@pos[0] + i, @pos[1] + i] }
+      slide(possible_moves, board) { |i| [@pos[0] + i, @pos[1] - i] }
+      slide(possible_moves, board) { |i| [@pos[0] - i, @pos[1] + i] }
+      slide(possible_moves, board) { |i| [@pos[0] - i, @pos[1] - i] }
+    end
+
+    if @move_dirs.include?(:horizontal_vertical)
+      # horizontal
+      slide(possible_moves, board) { |i| [@pos[0], @pos[1] + i] }
+      slide(possible_moves, board) { |i| [@pos[0], @pos[1] - i] }
+      # vert
+      slide(possible_moves, board) { |i| [@pos[0] + i, @pos[1]] }
+      slide(possible_moves, board) { |i| [@pos[0] - i, @pos[1]] }
+    end
+
+    possible_moves
+
+  end
+
+  private
+  def slide(possible_moves, board, &prc)
     1.upto(7) do |i|
-      if direction.include?(:diagonal)
-        possible_moves << [@pos[0] + i, @pos[1] + i]
-        possible_moves << [@pos[0] - i, @pos[1] - i]
-        possible_moves << [@pos[0] - i, @pos[1] + i]
-        possible_moves << [@pos[0] + i, @pos[1] - i]
+      possible_pos = prc.call(i)
+
+      if board.in_bounds?(possible_pos)
+        possible_moves << possible_pos if board[possible_pos].color != @color
+        if board[possible_pos].is_a?(NullPiece) == false
+          break
+        end
       end
 
-      if direction.include?(:horizontal_vertical)
-        possible_moves << [@pos[0], @pos[1] + i]
-        possible_moves << [@pos[0], @pos[1] - i]
-        possible_moves << [@pos[0] + i, @pos[1]]
-        possible_moves << [@pos[0] - i, @pos[1]]
-      end
     end
-    in_bound_moves = possible_moves.select { |move| @board.in_bounds?(move) }
-    in_bound_moves.select { |move| @board[move].piece.color != @color }
   end
+
 end
 
 class SteppingPiece < Piece
+  def moves(board)
+    possible_moves = []
+
+    if @move_dirs.include?(:king_move)
+      [-1,0,1].each do |i|
+        [-1,0,1].each do |j|
+          possible_moves << [@pos[0] + i, @pos[1] + j]
+        end
+      end
+    end
+
+    if @move_dirs.include?(:knight_move)
+      [-1,1].each do |one|
+        [-2,2].each do |two|
+          possible_moves << [@pos[0] + one, @pos[1] + two]
+          possible_moves << [@pos[0] + two, @pos[1] + one]
+        end
+      end
+    end
+    in_bound_moves = possible_moves.select { |move| board.in_bounds?(move) }
+    in_bound_moves.select { |move| board[move].color != @color }
+   end
 end
 
 class King < SteppingPiece
@@ -57,9 +127,6 @@ class King < SteppingPiece
     @move_dirs = [:king_move]
   end
 
-  def moves
-    super(@move_dirs)
-  end
 end
 
 class Knight < SteppingPiece
@@ -69,20 +136,37 @@ class Knight < SteppingPiece
     @move_dirs = [:knight_move]
   end
 
-  def moves
-    super(@move_dirs)
-  end
 end
 
-class Pawn < SteppingPiece
+class Pawn < Piece
   def initialize(pos, color)
     super
     @type = :pawn
     @move_dirs = [:pawn_move]
   end
 
-  def moves
-    super(@move_dirs)
+  def moves(board)
+    @board = board
+    possible_moves = []
+    possible_moves << [@pos[0] + 1, @pos[1]] if @board.in_bounds?([@pos[0] + 1, @pos[1]])
+
+    possible_attacks = []
+    if @color == :white
+      i = 1
+    else
+      i = -1
+    end
+    possible_attacks << [@pos[0] + i, @pos[1] + 1]
+    possible_attacks << [@pos[0] + i, @pos[1] - 1]
+
+    valid_attacks = possible_attacks.select do |move|
+      @board.in_bounds?(move) &&
+        @board[move].color != @color &&
+        !@board[move].is_a?(NullPiece)
+    end
+
+    possible_moves += valid_attacks
+    possible_moves.select { |move| @board[move].color != @color }
   end
 end
 
@@ -94,9 +178,6 @@ class Bishop < SlidingPiece
     @move_dirs = [:diagonal]
   end
 
-  def moves
-    super(@move_dirs)
-  end
 end
 
 class Rook < SlidingPiece
@@ -106,9 +187,6 @@ class Rook < SlidingPiece
     @move_dirs = [:horizontal_vertical]
   end
 
-  def moves
-    super(@move_dirs)
-  end
 end
 
 class Queen < SlidingPiece
@@ -118,18 +196,18 @@ class Queen < SlidingPiece
     @move_dirs = [:diagnoal, :horizontal_vertical]
   end
 
-  def moves
-    super(@move_dirs)
-  end
 end
 
 class NullPiece < Piece
-  # include Singleton
+  include Singleton
+
   def initialize
     @type = :null
+    @color = :null
   end
 
-  # def to_s
-  #   "   "
-  # end
+  def dup
+    NullPiece.instance
+  end
+
 end

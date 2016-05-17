@@ -2,20 +2,12 @@ require_relative 'pieces'
 
 class Board
   attr_reader :grid
-  def initialize(grid = Array.new(8) {Array.new(8) {NullPiece.new} })
+  def initialize(grid = Array.new(8) {Array.new(8) {NullPiece.instance} })
     @grid = grid
-    build_board
   end
 
   def move(start, end_pos)
-    begin
-      raise "No starting piece" if self[start].is_a?(NullPiece)
-      raise "Invalid end point" if invalid?(end_pos)
-    rescue
-      retry
-    end
-
-    self[start].move_to(end_pos)
+    self[start].move(self, end_pos)
   end
 
   def in_bounds?(pos)
@@ -32,7 +24,54 @@ class Board
     @grid[x][y] = piece
   end
 
-  private
+  def in_check?(color)
+    our_king = nil
+    @grid.each do |row|
+      row.each do |space|
+        our_king = space if space.is_a?(King) && space.color == color
+      end
+    end
+
+    @grid.each do |row|
+      row.each do |space|
+        unless space.color == color && space.is_a?(NullPiece)
+          return true if space.moves(self).include?(our_king.pos)
+        end
+      end
+    end
+
+    false
+  end
+
+  def dup
+    # deep-duplicate the grid, also duplicating each piece
+    grid_copy = []
+    @grid.each do |row|
+      grid_copy_row = []
+      row.each do |space|
+        grid_copy_row << space.dup
+      end
+      grid_copy << grid_copy_row
+    end
+
+    # return a new Board, passing in the grid that we just created
+    Board.new(grid_copy)
+  end
+
+  def checkmate?(color)
+    if self.in_check?(color)
+      @grid.each do |row|
+        row.each do |space|
+          if space.color == color && !space.valid_moves(self).empty?
+            return false
+          end
+        end
+      end
+      return true
+    end
+    return false
+  end
+
   def build_board
     self[[0, 0]] = Rook.new([0,0], :white)
     self[[0, 7]] = Rook.new([0,7], :white)
@@ -53,7 +92,7 @@ class Board
 
     (0..7).each do |el|
       self[[1, el]] = Pawn.new([1,el], :white)
-      self[[6, el]] = Pawn.new([1,el], :black)
+      self[[6, el]] = Pawn.new([6,el], :black)
     end
 
   end

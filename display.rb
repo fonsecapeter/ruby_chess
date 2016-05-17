@@ -12,7 +12,6 @@ class Display
   end
 
   def render
-    # do some stuff
     system("clear")
     draw_board.each { |row| puts row.join }
   end
