@@ -1,5 +1,5 @@
 require 'colorize'
-require_relative 'cursorable'
+require_relative 'modules/cursorable'
 
 class Display
   include Cursorable
@@ -15,6 +15,7 @@ class Display
 
   def render
     system("clear")
+    # 9.times { print "\x1B[1A\x1B[2K" } <= very noticable
     draw_board.each { |row| puts row.join }
   end
 
@@ -35,7 +36,7 @@ class Display
     if [i, j] == @cursor_pos
       bg = @player_color
     elsif (i + j).even?
-      bg = :light_blue
+      bg = :blue
     else
       bg = :light_black
     end

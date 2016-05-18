@@ -1,4 +1,4 @@
-require_relative 'pieces'
+require_relative 'pieces_manifest'
 
 class Board
   attr_reader :grid
