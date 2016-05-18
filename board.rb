@@ -7,7 +7,7 @@ class Board
   end
 
   def move(start, end_pos)
-    self[start].move(self, end_pos)
+    self[start].move!(self, end_pos)
   end
 
   def in_bounds?(pos)

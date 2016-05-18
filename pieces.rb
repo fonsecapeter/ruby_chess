@@ -147,15 +147,17 @@ class Pawn < Piece
 
   def moves(board)
     @board = board
-    possible_moves = []
-    possible_moves << [@pos[0] + 1, @pos[1]] if @board.in_bounds?([@pos[0] + 1, @pos[1]])
 
-    possible_attacks = []
     if @color == :white
       i = 1
     else
       i = -1
     end
+
+    possible_moves = []
+    possible_moves << [@pos[0] + i, @pos[1]] if @board.in_bounds?([@pos[0] + i, @pos[1]]) && @board[[@pos[0] + i, @pos[1]]].is_a?(NullPiece)
+
+    possible_attacks = []
     possible_attacks << [@pos[0] + i, @pos[1] + 1]
     possible_attacks << [@pos[0] + i, @pos[1] - 1]
 
@@ -193,7 +195,7 @@ class Queen < SlidingPiece
   def initialize(pos, color)
     super
     @type = :queen
-    @move_dirs = [:diagnoal, :horizontal_vertical]
+    @move_dirs = [:diagonal, :horizontal_vertical]
   end
 
 end

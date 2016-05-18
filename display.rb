@@ -3,11 +3,13 @@ require_relative 'cursorable'
 
 class Display
   include Cursorable
+  attr_accessor :selected
   attr_reader :board
 
-  def initialize(board)
+  def initialize(board, player_color)
     @board = board
     @cursor_pos = [0, 0]
+    @player_color = player_color
     @selected = nil
   end
 
@@ -31,12 +33,18 @@ class Display
 
   def colors_for(i, j)
     if [i, j] == @cursor_pos
-      bg = :light_green
+      bg = @player_color
     elsif (i + j).even?
       bg = :light_blue
     else
       bg = :light_black
     end
-    { background: bg, color: @board[[i, j]].color }
+
+    if [i, j] == @selected
+      clr = :blue
+    else
+      clr = @board[[i, j]].color
+    end
+    { background: bg, color:clr }
   end
 end

@@ -1,25 +1,33 @@
 require_relative 'display'
 
 class Player
-  def initialize(board)
-    @display = Display.new(board)
+  attr_reader :color
+  def initialize(board, color, team)
+    @display = Display.new(board, color)
+    @color = color
+    @team = team
   end
 
   def get_move(board)
+
     begin
       starting_pos = get_pos
-      raise "No starting piece" if board[starting_pos].is_a?(NullPiece)
-    rescue
+      raise StartingPosError if board[starting_pos].is_a?(NullPiece) ||
+        board[starting_pos].valid_moves(board).empty? ||
+        board[starting_pos].color != @team
+    rescue StartingPosError
       retry
     end
-    puts "#{starting_pos} selected"
+
     begin
+      @display.selected = starting_pos
       target_pos = get_pos
-      raise "Invalid end point" unless board[starting_pos].valid_moves.include?(target_pos)
-    rescue
+      raise TargetPosError unless board[starting_pos].valid_moves(board).include?(target_pos)
+    rescue TargetPosError
       retry
     end
-    puts "#{starting_pos} > #{target_pos}"
+
+    @display.selected = nil
     [starting_pos, target_pos]
   end
 
@@ -32,4 +40,10 @@ class Player
     end
     result
   end
+end
+
+class StartingPosError < StandardError
+end
+
+class TargetPosError < StandardError
 end
