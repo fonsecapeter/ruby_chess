@@ -17,6 +17,7 @@ class Game
     until @board.checkmate?(:white) || @board.checkmate?(:black)
       play_turn
     end
+    @current_display.render
     puts "Game Over!!!!!!"
   end
 
