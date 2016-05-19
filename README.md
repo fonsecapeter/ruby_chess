@@ -1,13 +1,9 @@
-Ruby Chess
+# Ruby Chess
 
-to play this game, enter this into your terminal (in the directory that you want to download to)
-```bash
-git clone https://github.com/fonsecapeter/ruby_chess
-```
+![alt text]( https://github.com/fonsecapeter/ruby_chess/media/sc.png "screenshot")
 
-then cd into that folder and type
-```bash
-ruby chess/game.rb
-```
+To play this game, first clone the repository `git clone https://github.com/fonsecapeter/ruby_chess` then run the game `ruby ruby_chess/game.rb`.
+
+This game was made with ruby, implementing the cursorable module from rglassett's [ruby-cursor-game](https://github.com/rglassett/ruby-cursor-game). It was made following the best practices of OOP to keep the code DRY and robust, complete with unit tests.
 
 > created by Peter Fonseca and Quyen Nguyen

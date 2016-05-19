@@ -1,10 +1,12 @@
-require_relative 'board'
-require_relative 'player'
+require 'rubygems'
+require 'bundler'
+require_relative 'lib/board'
+require_relative 'lib/player'
 
 class Game
   def initialize
     @board = Board.new
-    @board.build_board
+    @board.populate
     @player_1 = Player.new(@board, :red, :white)
     @player_2 = Player.new(@board, :green, :black)
     @current_player = @player_2
@@ -18,7 +20,7 @@ class Game
       play_turn
     end
     @current_display.render
-    puts "Game Over!!!!!!"
+    puts "     Game Over!!!!!"
   end
 
   def play_turn
