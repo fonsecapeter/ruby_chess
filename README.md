@@ -1,6 +1,6 @@
 # Ruby Chess
 
-![alt text]( https://github.com/fonsecapeter/ruby_chess/media/sc.png "screenshot")
+![screenshot]( https://github.com/fonsecapeter/ruby_chess/blob/master/media/sc.png "sc.png")
 
 To play this game, first clone the repository `git clone https://github.com/fonsecapeter/ruby_chess` then run the game `ruby ruby_chess/game.rb`.
 
