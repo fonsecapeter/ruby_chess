@@ -5,7 +5,8 @@ describe Piece do
   let(:clr) { :white }
   let(:pos) { [0, 0] }
   let(:board) { double("board") }
-  subject(:piece) { Piece.new(pos, clr) }
+  let(:board_copy) { double("board") }
+  subject(:piece) { Rook.new(pos, clr) }
 
   describe "#initialize" do
     it "initializes the piece's position" do
@@ -20,12 +21,21 @@ describe Piece do
   describe "#moves" do
     it "always outputs an array" do
       allow(board).to receive(:[]=)
+      allow(board).to receive(:[]).and_return(NullPiece.instance)
+      allow(board).to receive(:in_bounds?).and_return(true)
       expect(piece.moves(board)).to be_an(Array)
     end
   end
 
+
+  # integration tests
+  # --------------------------------------------------------------------
+  let (:real_board) { Board.new }
+  before(:each) { real_board.populate }
+
   describe "valid_moves" do
     it "will not allow a move that puts the piece's team in check"
+    real_board.move[[0, 4], []]
   end
 
   describe "#move" do
