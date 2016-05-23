@@ -46,6 +46,6 @@ class Display
     else
       clr = @board[[i, j]].color
     end
-    { background: bg, color:clr }
+    { background: bg, color: clr }
   end
 end

@@ -1,12 +1,12 @@
 class Piece
   TYPES = {
-    :null   => "   ",
-    :king   => " \u265A ".encode('utf-8'),
-    :queen  => " \u265B ".encode('utf-8'),
-    :bishop => " \u265D ".encode('utf-8'),
-    :knight => " \u265E ".encode('utf-8'),
-    :rook   => " \u265C ".encode('utf-8'),
-    :pawn   => " \u265F ".encode('utf-8'),
+    null:   "   ",
+    king:   " \u265A ".encode('utf-8'),
+    queen:  " \u265B ".encode('utf-8'),
+    bishop: " \u265D ".encode('utf-8'),
+    knight: " \u265E ".encode('utf-8'),
+    rook:   " \u265C ".encode('utf-8'),
+    pawn:   " \u265F ".encode('utf-8')
   }
 
   attr_reader :color, :pos, :type
@@ -20,7 +20,7 @@ class Piece
     TYPES[@type]
   end
 
-  def moves(board)
+  def moves(_board)
     # give all possible moves that are:
     #   a.) on the board
     #   b.) not blocked by onto another piece
@@ -48,9 +48,7 @@ class Piece
   end
 
   def move!(board, new_pos)
-    starting_pos = @pos
-    board[new_pos] = self
-    board[starting_pos] = NullPiece.instance
+    move(board, new_pos)
     @pos = new_pos
   end
 end

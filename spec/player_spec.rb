@@ -7,11 +7,8 @@ describe Player do
 
   describe "#initialize" do
     it "initializes the player's display color" do
-      expect(player.color)
+      expect(player.color).to eq(:magenta)
     end
-
-    it "initializes the player's team"
-    it "initializes the player's display"
   end
 
   describe "#get_move" do

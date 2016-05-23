@@ -2,8 +2,8 @@
 
 ![screenshot]( https://github.com/fonsecapeter/ruby_chess/blob/master/media/sc.png "sc.png")
 
-To play this game, first clone the repository `git clone https://github.com/fonsecapeter/ruby_chess`, then run the game `ruby ruby_chess/game.rb`.
+Ruby chess is a 2-player terminal game. It was written under the best practices of OOP to keep the code DRY and robust, complete with unit and integration tests. It also implements the cursorable module from rglassett's [ruby-cursor-game](https://github.com/rglassett/ruby-cursor-game).
 
-Ruby chess was written in ruby, implementing the cursorable module from rglassett's [ruby-cursor-game](https://github.com/rglassett/ruby-cursor-game). We followed the best practices of OOP to keep the code DRY and robust, complete with unit tests.
+To play this game, first clone the repository `git clone https://github.com/fonsecapeter/ruby_chess`, then run `ruby ruby_chess/game.rb`.
 
 > created by Peter Fonseca and Quyen Nguyen

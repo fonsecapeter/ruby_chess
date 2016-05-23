@@ -16,11 +16,10 @@ class Game
   end
 
   def play
-    until @board.checkmate?(:white) || @board.checkmate?(:black)
-      play_turn
-    end
+    play_turn until @board.checkmate?(:white) || @board.checkmate?(:black)
+
     @current_display.render
-    puts "     Game Over!!!!!"
+    puts '     Game Over!!!!!'
   end
 
   def play_turn
