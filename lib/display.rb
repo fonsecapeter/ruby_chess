@@ -1,6 +1,5 @@
 require 'colorize'
 require_relative 'modules/cursorable'
-require 'byebug'
 
 class Display
   include Cursorable
@@ -24,11 +23,13 @@ class Display
   def draw_board
     if @selected
       @available_spaces = @board[@selected].valid_moves(@board)
+      @unavailable_spaces = @board[@selected].moves(@board) - @available_spaces
     else
       @available_spaces = []
+      @unavailable_spaces = []
     end
 
-    output = [["           🐧            ".colorize(background: :red, color: :white)]]
+    output = [["------------------------".colorize(background: :red, color: :white)]]
     @board.grid.each_with_index do |row, i|
       output_row = []
       row.each_with_index do |space, j|
@@ -36,7 +37,7 @@ class Display
       end
       output << output_row
     end
-    output << ["           🐘            ".colorize(background: :green, color: :black)]
+    output << ["------------------------".colorize(background: :green, color: :black)]
   end
 
   def colors_for(i, j)
@@ -44,6 +45,8 @@ class Display
       bg = @player_color
     elsif @available_spaces.include?([i, j])
       bg = :dark_white
+    elsif @unavailable_spaces.include?([i, j])
+      bg = :magenta
     elsif (i + j).even?
       bg = :blue
     else
@@ -52,7 +55,7 @@ class Display
 
 
     if [i, j] == @selected
-      clr = :light_purple
+      clr = "light_#{@player_color}".to_sym
     else
       clr = @board[[i, j]].color
     end

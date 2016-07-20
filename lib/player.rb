@@ -9,21 +9,28 @@ class Player
   end
 
   def get_move(board)
-
     begin
-      starting_pos = get_pos
-      raise StartingPosError if board[starting_pos].is_a?(NullPiece) ||
-        board[starting_pos].valid_moves(board).empty? ||
-        board[starting_pos].color != @team
-    rescue StartingPosError
-      retry
-    end
+      begin
+        starting_pos = get_pos
+        raise StartingPosError if board[starting_pos].is_a?(NullPiece) ||
+          board[starting_pos].valid_moves(board).empty? ||
+          board[starting_pos].color != @team
+      rescue StartingPosError
+        retry
+      end
 
-    begin
-      @display.selected = starting_pos
-      target_pos = get_pos
-      raise TargetPosError unless board[starting_pos].valid_moves(board).include?(target_pos)
-    rescue TargetPosError
+      begin
+        @display.selected = starting_pos
+        target_pos = get_pos
+        raise ResetPosError if target_pos == starting_pos
+        raise TargetPosError unless board[starting_pos].valid_moves(board).include?(target_pos) || target_pos == starting_pos
+      rescue TargetPosError
+        retry
+      end
+    rescue ResetPosError
+      starting_pos = nil
+      target_pos = nil
+      @display.selected = nil
       retry
     end
 
@@ -46,4 +53,7 @@ class StartingPosError < StandardError
 end
 
 class TargetPosError < StandardError
+end
+
+class ResetPosError < StandardError
 end

@@ -48,6 +48,7 @@ class Piece
   end
 
   def move!(board, new_pos)
+    # debugger if @stype == :king
     move(board, new_pos)
     @pos = new_pos
   end
