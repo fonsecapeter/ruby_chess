@@ -32,13 +32,7 @@ class Display
       @unavailable_spaces = []
     end
 
-    # output = [["------------------------".colorize(background: :red, color: CONSTANTS[:white])]]
     output = [[@player_1.captured_to_s]]
-    # player_1_captured = ""
-    # (0...24).each do |idx|
-    #   player_1_captured += idx < @player_1.captured_pieces.length ? @player_1.captured_pieces[idx].strip : "-"
-    # end
-    # output << [player_1_captured.colorize(background: :red, color: CONSTANTS[:white])]
     @board.grid.each_with_index do |row, i|
       output_row = []
       row.each_with_index do |space, j|
@@ -46,7 +40,6 @@ class Display
       end
       output << output_row
     end
-    # output << ["------------------------".colorize(background: :green, color: CONSTANTS[:black])]
     output << [@player_2.captured_to_s]
   end
 
