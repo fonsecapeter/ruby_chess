@@ -34,7 +34,7 @@ class Piece
     valid_moves = []
     moves(board).each do |pos|
       board_copy = board.dup
-      move(board_copy, pos)
+      board_copy.move(@pos, pos)
 
       valid_moves << pos unless board_copy.in_check?(@color)
     end

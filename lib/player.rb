@@ -23,7 +23,7 @@ class Player
         @display.selected = starting_pos
         target_pos = get_pos
         raise ResetPosError if target_pos == starting_pos # toggle selected
-        raise TargetPosError unless board[starting_pos].valid_moves(board).include?(target_pos) || ResetPosError
+        raise TargetPosError unless board[starting_pos].valid_moves(board).include?(target_pos)
       rescue TargetPosError
         retry
       end
