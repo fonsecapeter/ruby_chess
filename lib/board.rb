@@ -54,6 +54,7 @@ class Board
 
   def move(start, end_pos)
     self[start].move!(self, end_pos)
+    ensure_promotion(self[end_pos]) if self[end_pos].is_a?(Pawn)
   end
 
   def dup
@@ -105,5 +106,12 @@ class Board
       end
     end
     nil
+  end
+
+  def ensure_promotion(pawn)
+    if (pawn.color == CONSTANTS[:white] && pawn.pos[0] == 7) ||
+       (pawn.color == CONSTANTS[:black] && pawn.pos[0] == 0)
+      @grid[pawn.pos[0]][pawn.pos[1]] = Queen.new(pawn.pos, pawn.color)
+    end
   end
 end
