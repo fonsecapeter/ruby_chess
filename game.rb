@@ -2,21 +2,25 @@ require 'rubygems'
 require 'bundler'
 require_relative 'lib/board'
 require_relative 'lib/player'
+require_relative 'lib/constants'
 
 class Game
   def initialize
     @board = Board.new
     @board.populate
-    @player_1 = Player.new(@board, :red, :white)
-    @player_2 = Player.new(@board, :green, :black)
+    @player_1 = Player.new(@board, CONSTANTS[:player_1_color], CONSTANTS[:white])
+    @player_2 = Player.new(@board, CONSTANTS[:player_2_color], CONSTANTS[:black])
     @current_player = @player_2
-    @display_1 = Display.new(@board, @player_1.color)
-    @display_2 = Display.new(@board, @player_2.color)
+    @display_1 = Display.new(@board, @player_1.color, @player_1, @player_2)
+    @display_2 = Display.new(@board, @player_2.color, @player_1, @player_2)
     @current_display = @display_2
+
+    @player_1.display = @display_1
+    @player_2.display = @display_2
   end
 
   def play
-    play_turn until @board.checkmate?(:white) || @board.checkmate?(:black)
+    play_turn until @board.checkmate?(CONSTANTS[:white]) || @board.checkmate?(CONSTANTS[:black])
 
     @current_display.render
     puts '     Game Over!!!!!'

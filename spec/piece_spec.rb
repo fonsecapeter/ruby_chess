@@ -1,8 +1,9 @@
 require 'rspec'
 require 'pieces/piece'
+require_relative '../lib/constants'
 
 describe Piece do
-  let(:clr) { :white }
+  let(:clr) { CONSTANTS[:white] }
   let(:pos) { [0, 0] }
   let(:board) { double("board") }
   let(:board_copy) { double("board") }
@@ -14,7 +15,7 @@ describe Piece do
     end
 
     it "initializes the piece's color" do
-      expect(piece.color).to eq(:white)
+      expect(piece.color).to eq(CONSTANTS[:white])
     end
   end
 

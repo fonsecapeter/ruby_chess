@@ -1,4 +1,5 @@
 require_relative 'pieces_manifest'
+require_relative 'constants'
 
 class Board
   attr_reader :grid
@@ -72,24 +73,31 @@ class Board
 
   def populate
     [0, 7].each do |row|
-      row == 0 ? clr = :white : clr = :black
+      row == 0 ? clr = CONSTANTS[:white] : clr = CONSTANTS[:black]
+      if clr == CONSTANTS[:white]
+        k_col, q_col = 4, 3
+      else
+        k_col, q_col = 3, 4
+      end
+
       self[[row, 0]] =   Rook.new([row, 0], clr)
       self[[row, 7]] =   Rook.new([row, 7], clr)
       self[[row, 1]] = Knight.new([row, 1], clr)
       self[[row, 6]] = Knight.new([row, 6], clr)
       self[[row, 2]] = Bishop.new([row, 2], clr)
       self[[row, 5]] = Bishop.new([row, 5], clr)
-      self[[row, 3]] =  Queen.new([row, 3], clr)
-      self[[row, 4]] =   King.new([row, 4], clr)
+      self[[row, q_col]] =  Queen.new([row, q_col], clr)
+      self[[row, k_col]] =   King.new([row, k_col], clr)
     end
 
     (0..7).each do |el|
-      self[[1, el]] = Pawn.new([1, el], :white)
-      self[[6, el]] = Pawn.new([6, el], :black)
+      self[[1, el]] = Pawn.new([1, el], CONSTANTS[:white])
+      self[[6, el]] = Pawn.new([6, el], CONSTANTS[:black])
     end
   end
 
   private
+
   def find_king(color)
     @grid.each do |row|
       row.each do |piece|

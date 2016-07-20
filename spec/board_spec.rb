@@ -1,5 +1,6 @@
 require 'rspec'
 require 'board'
+require_relative '../lib/constants'
 
 describe Board do
   subject(:b) { Board.new }
@@ -52,12 +53,12 @@ describe Board do
 
     it "has kings" do
       expect(b[[0, 4]]).to be_a(King)
-      expect(b[[7, 4]]).to be_a(King)
+      expect(b[[7, 3]]).to be_a(King)
     end
 
     it "has queens" do
       expect(b[[0, 3]]).to be_a(Queen)
-      expect(b[[7, 3]]).to be_a(Queen)
+      expect(b[[7, 4]]).to be_a(Queen)
     end
 
     it "has pawns" do
@@ -66,8 +67,8 @@ describe Board do
     end
 
     it "picks teams" do
-      expect(b[[1, 3]].color).to eq(:white)
-      expect(b[[7, 6]].color).to eq(:black)
+      expect(b[[1, 3]].color).to eq(CONSTANTS[:white])
+      expect(b[[7, 6]].color).to eq(CONSTANTS[:black])
     end
   end
 
@@ -99,15 +100,15 @@ describe Board do
     before(:each) { b.populate }
 
     it "doesn't throw a false-positive" do
-      expect(b.in_check?(:white)).to be_falsey
-      expect(b.in_check?(:black)).to be_falsey
+      expect(b.in_check?(CONSTANTS[:white])).to be_falsey
+      expect(b.in_check?(CONSTANTS[:black])).to be_falsey
     end
 
     it "recognizes a threat to the king" do
       b.move([0, 0], [3, 4])
-      b.move([7, 4], [5, 4])
-      expect(b.in_check?(:black)).to be_truthy
-      expect(b.in_check?(:white)).to be_falsey
+      b.move([7, 3], [5, 4])
+      expect(b.in_check?(CONSTANTS[:black])).to be_truthy
+      expect(b.in_check?(CONSTANTS[:white])).to be_falsey
     end
   end
 
@@ -115,16 +116,16 @@ describe Board do
     before(:each) { b.populate }
 
     it "doesn't throw a false-positive" do
-      expect(b.checkmate?(:white)).to be_falsey
-      expect(b.checkmate?(:black)).to be_falsey
+      expect(b.checkmate?(CONSTANTS[:white])).to be_falsey
+      expect(b.checkmate?(CONSTANTS[:black])).to be_falsey
     end
 
     it "recognizes an inescapable threat to the king" do
-      b.move([6, 5], [4, 5])
-      b.move([6, 6], [4, 6])
-      b.move([0, 3], [4, 7])
-      expect(b.checkmate?(:black)).to be_truthy
-      expect(b.checkmate?(:white)).to be_falsey
+      b.move([6, 1], [4, 5])
+      b.move([6, 2], [4, 6])
+      b.move([0, 3], [4, 0])
+      expect(b.checkmate?(CONSTANTS[:black])).to be_truthy
+      expect(b.checkmate?(CONSTANTS[:white])).to be_falsey
     end
   end
 end

@@ -1,9 +1,10 @@
 require 'rspec'
 require 'player'
+require_relative '../lib/constants'
 
 describe Player do
   let (:board) { double("board") }
-  subject(:player) { Player.new(board, :magenta, :white) }
+  subject(:player) { Player.new(board, :magenta, CONSTANTS[:white]) }
 
   describe "#initialize" do
     it "initializes the player's display color" do

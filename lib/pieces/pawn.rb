@@ -1,3 +1,5 @@
+require_relative '../constants'
+
 class Pawn < Piece
   def initialize(pos, color)
     super
@@ -7,7 +9,7 @@ class Pawn < Piece
 
   def moves(board)
     @board = board
-    @color == :white ? i = 1 : i = -1
+    @color == CONSTANTS[:white] ? i = 1 : i = -1
 
     possible_moves = []
     possible_moves << [@pos[0] + i, @pos[1]] if @board.in_bounds?([@pos[0] + i, @pos[1]]) && @board[[@pos[0] + i, @pos[1]]].is_a?(NullPiece)
