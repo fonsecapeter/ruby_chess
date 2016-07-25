@@ -18,10 +18,12 @@ class Pawn < Piece
 
     if i == 1 && @pos[0] == 1
       move = [@pos[0] + 2, @pos[1]]
-      possible_moves << move if @board[move].is_a?(NullPiece)
+      possible_moves << move if @board[move].is_a?(NullPiece) &&
+        @board[[@pos[0] + 1, @pos[1]]].is_a?(NullPiece)
     elsif i == -1 && @pos[0] == 6
       move = [@pos[0] - 2, @pos[1]]
-      possible_moves << move if @board[move].is_a?(NullPiece)
+      possible_moves << move if @board[move].is_a?(NullPiece) &&
+        @board[[@pos[0] - 1, @pos[1]]].is_a?(NullPiece)
     end
 
     possible_attacks = []
