@@ -6,11 +6,22 @@ require_relative 'lib/computer_player'
 require_relative 'lib/constants'
 
 class Game
-  def initialize
+  def initialize(num_players = 1)
     @board = Board.new
     @board.populate
-    @player_1 = Player.new(@board, CONSTANTS[:player_1_color], CONSTANTS[:white])
-    @player_2 = ComputerPlayer.new(@board, CONSTANTS[:player_2_color], CONSTANTS[:black])
+
+    if num_players < 1
+      @player_1 = ComputerPlayer.new(@board, CONSTANTS[:player_1_color], CONSTANTS[:white])
+    else
+      @player_1 = Player.new(@board, CONSTANTS[:player_1_color], CONSTANTS[:white])
+    end
+
+    if num_players < 2
+      @player_2 = ComputerPlayer.new(@board, CONSTANTS[:player_2_color], CONSTANTS[:black])
+    else
+      @player_2 = Player.new(@board, CONSTANTS[:player_2_color], CONSTANTS[:black])
+    end
+
     @current_player = @player_2
     @display_1 = Display.new(@board, @player_1.color, @player_1, @player_2)
     @display_2 = Display.new(@board, @player_2.color, @player_1, @player_2)
@@ -46,5 +57,8 @@ class Game
   end
 end
 
-g = Game.new
-g.play
+if __FILE__ == $0
+  num_players = ARGV[0] || 1
+  g = Game.new(num_players.to_i)
+  g.play
+end

@@ -15,13 +15,17 @@ class ComputerPlayer < Player
   end
 
   def get_move(board)
+    sleep(0.4)
     best_move = pick_valuable_move
     starting_pos = best_move[0]
+    @display.send(:cursor_pos=, starting_pos)
     @display.selected = starting_pos
-    @display.render
     target_pos = best_move[1]
     @display.render
-    sleep(0.5)
+    sleep(0.4)
+    @display.send(:cursor_pos=, target_pos)
+    @display.render
+    sleep(0.6)
 
     unless @board[target_pos].is_a?(NullPiece)
       @captured_pieces << @board[target_pos].to_s

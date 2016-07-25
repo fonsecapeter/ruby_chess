@@ -9,7 +9,7 @@ class Display
 
   def initialize(board, player_color, player_1, player_2)
     @board = board
-    @cursor_pos = [0, 0]
+    @cursor_pos = player_color == CONSTANTS[:player_1_color] ? [1, 0] : [6, 7]
     @player_color = player_color
     @selected = nil
     @player_1 = player_1
@@ -23,6 +23,9 @@ class Display
   end
 
   private
+
+  attr_accessor :cursor_pos
+  
   def draw_board
     if @selected
       @available_spaces = @board[@selected].valid_moves(@board)
