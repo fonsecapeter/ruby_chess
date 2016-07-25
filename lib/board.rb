@@ -72,6 +72,14 @@ class Board
     Board.new(grid_copy)
   end
 
+  def pieces(team = nil)
+    if team
+      return each_space.select { |space| space.color == team }
+    else
+      return each_space.reject { |space| space.type == null }
+    end
+  end
+
   def populate
     [0, 7].each do |row|
       row == 0 ? clr = CONSTANTS[:white] : clr = CONSTANTS[:black]
@@ -98,6 +106,16 @@ class Board
   end
 
   private
+
+  def each_space
+    spaces = []
+    @grid.each do |row|
+      row.each do |space|
+        spaces << space
+      end
+    end
+    spaces
+  end
 
   def find_king(color)
     @grid.each do |row|

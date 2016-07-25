@@ -51,12 +51,13 @@ class Player
   def captured_to_s
     captured_string = ""
     (0...24).each do |idx|
-      captured_string += idx < captured_pieces.length ? captured_pieces[idx].strip : " "
+      captured_string += idx < captured_pieces.length ? (captured_pieces[idx].strip) : " "
     end
     captured_string.colorize(background: @color, color: opposing_team)
   end
 
-  private
+  protected
+  
   def get_pos
     result = nil
     until result
