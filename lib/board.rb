@@ -74,9 +74,9 @@ class Board
 
   def pieces(team = nil)
     if team
-      return each_space.select { |space| space.color == team }
+      return all_spaces.select { |space| space.color == team }
     else
-      return each_space.reject { |space| space.type == null }
+      return all_spaces.reject { |space| space.type == :null }
     end
   end
 
@@ -103,11 +103,12 @@ class Board
       self[[1, el]] = Pawn.new([1, el], CONSTANTS[:white])
       self[[6, el]] = Pawn.new([6, el], CONSTANTS[:black])
     end
+    self
   end
 
   private
 
-  def each_space
+  def all_spaces
     spaces = []
     @grid.each do |row|
       row.each do |space|

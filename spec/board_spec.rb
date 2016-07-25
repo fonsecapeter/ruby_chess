@@ -121,11 +121,28 @@ describe Board do
     end
 
     it "recognizes an inescapable threat to the king" do
-      b.move([6, 1], [4, 5])
-      b.move([6, 2], [4, 6])
-      b.move([0, 3], [4, 0])
+      b.move([6, 0], [5, 0]) # eliminate future threat to wqueen
+      b.move([6, 1], [4, 1]) # eliminate future threat to wqueen
+      b.move([6, 2], [4, 2]) # expose bking
+      b.move([0, 3], [4, 0]) # position wqeen
       expect(b.checkmate?(CONSTANTS[:black])).to be_truthy
       expect(b.checkmate?(CONSTANTS[:white])).to be_falsey
+    end
+  end
+
+  describe "#pieces" do
+    before(:each) { b.populate }
+
+    it "returns all pieces" do
+      expect(b.pieces.count).to eq(32)
+    end
+
+    it "ignores NullPieces" do
+      expect(b.pieces.any? { |piece| piece.type == :null }).to be_falsey
+    end
+
+    it "can take an optional team and only return those pieces" do
+      expect(b.pieces(CONSTANTS[:white]).count).to eq(16)
     end
   end
 end

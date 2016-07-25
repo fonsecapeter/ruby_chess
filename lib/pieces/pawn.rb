@@ -12,12 +12,16 @@ class Pawn < Piece
     @color == CONSTANTS[:white] ? i = 1 : i = -1
 
     possible_moves = []
-    possible_moves << [@pos[0] + i, @pos[1]] if @board.in_bounds?([@pos[0] + i, @pos[1]]) && @board[[@pos[0] + i, @pos[1]]].is_a?(NullPiece)
+    first_move = [@pos[0] + i, @pos[1]]
+    possible_moves << first_move if @board.in_bounds?(first_move) &&
+      @board[first_move].is_a?(NullPiece)
 
     if i == 1 && @pos[0] == 1
-      possible_moves << [@pos[0] + 2, @pos[1]]
+      move = [@pos[0] + 2, @pos[1]]
+      possible_moves << move if @board[move].is_a?(NullPiece)
     elsif i == -1 && @pos[0] == 6
-      possible_moves << [@pos[0] - 2, @pos[1]]
+      move = [@pos[0] - 2, @pos[1]]
+      possible_moves << move if @board[move].is_a?(NullPiece)
     end
 
     possible_attacks = []
