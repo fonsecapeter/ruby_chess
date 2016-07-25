@@ -19,7 +19,9 @@ ruby ruby_chess/game.rb
 ```
  > This will default to playing against the computer. If you would like to play with a friend, just run `ruby ruby_chess/game.rb 2`. You can specify 0-2 players in this way (0 being a match between two computer players).
 
-The computer player will prioritize moves based on putting the opponent in checkmate, check, or attacking the most valuable pieces possible.
+### Cool Features
+
+* The computer player will prioritize moves based on putting the opponent in checkmate, check, or attacking the most valuable pieces possible.
 
 ```ruby
 def pick_valuable_move
@@ -39,4 +41,13 @@ def pick_valuable_move
 end
 ```
 
-> The rules support pawn promotion and will not allow a player to move into check.
+ * Pawn promotion
+
+ ![pawn_promotion](/media/pawn_promotion.gif "pawn_promotion.gif")
+
+
+ ### Future Plans
+
+ * Poly-Tree-based AI consideration of future moves
+ * Yml-based game state saving
+ * Color preferences
