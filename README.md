@@ -41,9 +41,38 @@ def pick_valuable_move
 end
 ```
 
- * Pawn promotion
+* Various tasks are made parallel through multi-processing
+```ruby
+def checks
+  parent_socket, child_socket = UNIXSocket.pair
 
- ![pawn_promotion](/media/pawn_promotion.gif "pawn_promotion.gif")
+  moves = []
+  @valid_moves.each do |move|
+    # open new process
+    fork do
+      parent_socket.close
+      board_copy = @board.dup
+      board_copy.move(move[0], move[1])
+
+      if board_copy.in_check?(opposing_team)
+        child_socket.send(move.to_json, 0)
+      else
+        child_socket.send(["_"].to_json, 0)
+      end
+    end
+    potential = JSON.parse(parent_socket.recv(100))
+    moves << potential unless potential == ["_"]
+  end
+
+  child_socket.close
+  Process.waitall
+  moves
+end
+```
+
+* Pawn promotion
+
+![pawn_promotion](/media/pawn_promotion.gif "pawn_promotion.gif")
 
 
  ### Future Plans

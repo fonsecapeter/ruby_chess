@@ -1,4 +1,6 @@
 require_relative 'player.rb'
+require 'socket'
+require 'json'
 
 class ComputerPlayer < Player
   def initialize(board, color, team, display = {})
@@ -15,7 +17,7 @@ class ComputerPlayer < Player
   end
 
   def get_move(board)
-    sleep(0.4)
+    #sleep(0.4)
     best_move = pick_valuable_move
     starting_pos = best_move[0]
     @display.send(:cursor_pos=, starting_pos)
@@ -54,7 +56,7 @@ class ComputerPlayer < Player
     end
   end
 
-  def get_moveable_pieces
+  def get_movable_pieces
     @board.pieces(@team)
       .select { |piece| piece.valid_moves(@board).any? }
   end
@@ -62,7 +64,7 @@ class ComputerPlayer < Player
   def get_valid_moves
     # costly step, save output to instance var
     @valid_moves = []
-    get_moveable_pieces.each do |piece|
+    get_movable_pieces.each do |piece|
       piece.valid_moves(@board).each do |move|
         @valid_moves << [piece.pos, move]
       end
@@ -75,16 +77,28 @@ class ComputerPlayer < Player
   end
 
   def checkmates
+    parent_socket, child_socket = UNIXSocket.pair
+
     moves = []
     @valid_moves.each do |move|
       # open new process
       fork do
+        parent_socket.close
         board_copy = @board.dup
         board_copy.move(move[0], move[1])
 
-        moves << move if board_copy.checkmate?(opposing_team)
+        # moves << move if board_copy.checkmate?(opposing_team)
+        if board_copy.checkmate?(opposing_team)
+          child_socket.send(move.to_json, 0)
+        else
+          child_socket.send(["_"].to_json, 0)
+        end
       end
+      potential = JSON.parse(parent_socket.recv(100))
+      moves << potential  unless potential == ["_"]
     end
+
+    child_socket.close
     Process.waitall
     moves
   end
@@ -94,15 +108,27 @@ class ComputerPlayer < Player
   end
 
   def checks
+    parent_socket, child_socket = UNIXSocket.pair
+
     moves = []
     @valid_moves.each do |move|
+      # open new process
       fork do
+        parent_socket.close
         board_copy = @board.dup
         board_copy.move(move[0], move[1])
 
-        moves << move if board_copy.in_check?(opposing_team)
+        if board_copy.in_check?(opposing_team)
+          child_socket.send(move.to_json, 0)
+        else
+          child_socket.send(["_"].to_json, 0)
+        end
       end
+      potential = JSON.parse(parent_socket.recv(100))
+      moves << potential unless potential == ["_"]
     end
+
+    child_socket.close
     Process.waitall
     moves
   end
