@@ -77,11 +77,15 @@ class ComputerPlayer < Player
   def checkmates
     moves = []
     @valid_moves.each do |move|
-      board_copy = @board.dup
-      board_copy.move(move[0], move[1])
+      # open new process
+      fork do
+        board_copy = @board.dup
+        board_copy.move(move[0], move[1])
 
-      moves << move if board_copy.checkmate?(opposing_team)
+        moves << move if board_copy.checkmate?(opposing_team)
+      end
     end
+    Process.waitall
     moves
   end
 
@@ -92,11 +96,14 @@ class ComputerPlayer < Player
   def checks
     moves = []
     @valid_moves.each do |move|
-      board_copy = @board.dup
-      board_copy.move(move[0], move[1])
+      fork do
+        board_copy = @board.dup
+        board_copy.move(move[0], move[1])
 
-      moves << move if board_copy.in_check?(opposing_team)
+        moves << move if board_copy.in_check?(opposing_team)
+      end
     end
+    Process.waitall
     moves
   end
 
